@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <title>ARIYONT DONAT PRO</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Splash ekran -->
+<div id="splash">
+    <img src="img/logo.png" alt="Logo" class="logo">
+</div>
+
+<div class="header">
+    <img src="img/logo.png" alt="Logo" height="40">
+    ARIYONT DONAT PRO
+</div>
+
+<h2 class="section-title">📱 Mobil va 💻 PC o‘yinlar</h2>
+<div class="cards" id="cards"></div>
+
+<!-- Donat oynasi -->
+<div class="modal" id="donateModal">
+    <div class="modal-content">
+        <h3 id="gameTitle">Donat</h3>
+        <input type="text" placeholder="O‘yin ID raqami" id="playerId">
+        <select id="amountSelect"></select>
+        <button class="btn" onclick="showPayment()">Keyingi</button>
+        <button class="btn cancel" onclick="closeModal()">Bekor</button>
+    </div>
+</div>
+
+<!-- To‘lov oynasi -->
+<div class="modal" id="paymentModal">
+    <div class="modal-content">
+        <h3>To‘lov usuli</h3>
+        <select id="paymentMethod">
+            <option value="click">CLICK</option>
+            <option value="payme">Payme</option>
+            <option value="uzcard">UzCard</option>
+            <option value="humo">HumoCard</option>
+        </select>
+        <input type="text" placeholder="Karta raqami" id="cardNumber">
+        <input type="text" placeholder="Amal muddati (MM/YY)" id="cardExpiry">
+        <input type="text" placeholder="CVV" id="cardCVV">
+        <button class="btn" onclick="confirmPayment()">To‘lash</button>
+    </div>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
