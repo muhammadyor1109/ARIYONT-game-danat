@@ -1,54 +1,49 @@
-window.onload = function () {
-    setTimeout(() => document.getElementById('splash').style.display = 'none', 1000);
-    loadGames();
-};
-
-async function loadGames() {
-    const res = await fetch('data/games.json');
-    const games = await res.json();
-
-    let cardsDiv = document.getElementById('cards');
-    games.forEach(game => {
-        let card = document.createElement('div');
-        card.className = 'card';
-        card.innerHTML = `<h3>${game.name}</h3>
-            <button class="btn" onclick="openModal('${game.name}', '${game.currency}')">Donat</button>`;
-        cardsDiv.appendChild(card);
-    });
-}
-
-function openModal(gameName, currency) {
-    document.getElementById('gameTitle').innerText = `${gameName} Donat`;
-    let select = document.getElementById('amountSelect');
-    select.innerHTML = '';
-    [60, 325, 660, 1800, 2460, 3850].forEach(amount => {
-        let option = document.createElement('option');
-        option.text = `${amount} ${currency}`;
-        select.add(option);
-    });
-    document.getElementById('donateModal').style.display = 'flex';
-}
-
-function showPayment() {
+function confirmPayment() {
+    let cardNum = document.getElementById('cardNumber').value;
+    let cardExpiry = document.getElementById('cardExpiry').value;
+    let cardCVV = document.getElementById('cardCVV').value;
+    let paymentMethod = document.getElementById('paymentMethod').value;
     let playerId = document.getElementById('playerId').value;
+    let gameTitle = document.getElementById('gameTitle').innerText.replace(" Donat", "");
+    let amountText = document.getElementById('amountSelect').value;
+    let amount = parseInt(amountText);
+
+    if (cardNum.length !== 16) {
+        alert("Karta raqami 16 ta raqam bo‘lishi kerak!");
+        return;
+    }
+    if (cardCVV.length !== 3) {
+        alert("CVV noto‘g‘ri!");
+        return;
+    }
     if (playerId.trim().length < 5) {
         alert("O‘yin ID kamida 5 ta belgidan iborat bo‘lishi kerak!");
         return;
     }
-    document.getElementById('donateModal').style.display = 'none';
-    document.getElementById('paymentModal').style.display = 'flex';
-}
 
-function confirmPayment() {
-    let cardNum = document.getElementById('cardNumber').value;
-    if (cardNum.trim().length !== 16) {
-        alert("Karta raqami 16 ta raqam bo‘lishi kerak!");
-        return;
-    }
-    alert("To‘lov muvaffaqiyatli bajarildi!");
-    closeModal();
-}
-
-function closeModal() {
-    document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+    // To‘lovni serverga yuborish
+    fetch('http://localhost:5000/api/payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            game: gameTitle,
+            amount: amount,
+            playerId: playerId,
+            paymentMethod: paymentMethod,
+            cardNumber: cardNum,
+            cardExpiry: cardExpiry,
+            cardCVV: cardCVV
+        })
+    })
+    .then(res => res.json())
+    .then(data => {
+        alert(data.message);
+        closeModal();
+    })
+    .catch(err => {
+        alert("Xatolik: " + err);
+        closeModal();
+    });
 }
